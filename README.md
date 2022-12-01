@@ -23,13 +23,19 @@ Run `sbt test` to run unit tests
 
   `config.json` contains parameters to run InfoFlow. Edit appropriately:
 
-  `Graph`: file path of the graph file. Currently supported graph file formats are local Pajek net format (.net) and Parquet format. If Parquet format is used, then two Parquet files are required, one holding the vertex information (node index, node name, module index) and one holding edge information (from index, to index, edge weight). The file path points to a Json file with `.parquet` extension, in this format:
+  `Graph`: file path of the graph file. Currently supported graph file formats are local Pajek net format (.net) and Parquet format. If Parquet format is used, then two Parquet files are required, one holding the vertex information (node index, node name, module index) and one holding edge information (from index, to index, edge weight). The file path points to a Json file (YES, its a json file) with `.parquet` extension, in this format:
 ```
 {
-  "Vertex File": "path to vertex file",
+  "Vertex File": "path to vertex file. Does not necessary need to end with .parquet. Normally its a folder",
   "Edge File": "path to edge file"
 }
 ```
+```
+More details on HDFS Parquet File Format
+  Vertex column name & datatype: (idx: Long, name: String, module: Long)
+  Edges column name & datatype: (from: Long, to: Long, weight: Double)
+```
+
 
   `spark configs`: Spark related configurations
 
@@ -62,6 +68,57 @@ Run `sbt test` to run unit tests
   `log, debug`: boolean value; set true to save all intermediate graphs
 
 To suppress a logging feature, put in an empty file path. For example, if you do not want to save in RDD format, set `RDD path` to "".
+
+### Sample Java Conf
+```
+# parameters related to Java
+java_conf = {
+    "dir": r'/home/paul/SomeProjects',
+    "jar_name": "infoflow",
+    "scala_version": "2.11",
+    "infoflow_version": "1.1.1"
+}
+```
+
+### Sample Infoflow Config (If you're reading from parquet)
+```
+# parameters required in InfoFlow config file
+infoflow_config = {
+#     "Graph": 'Nets/paul_sample_graph.net',
+    "Graph":"data.parquet",
+    "spark configs": {
+    "Master": "yarn",
+    "num executors": "5",
+    "executor cores": "8",
+    "driver memory": "10G",
+    "executor memory": "2G",
+    "queue": "root.NBA",
+    "storage fraction": "0.3",
+    "memory overhead": "4G",
+    "dynamic allocation flag": "false",
+    "serializer": "org.apache.spark.serializer.KryoSerializer",
+    "kyro registration flag": "false"
+    },
+    "PageRank": {
+        "tele": 0.15,
+        "error threshold factor": 20
+    },
+    "Community Detection": {
+        "name": "InfoFlow",
+        "merge direction": "symmetric",
+        "merge nonedge": False
+    },
+    "log": {
+        "log path": "Output/log.txt",
+        "Parquet path": '',
+        "RDD path": '',
+        "txt path": "Output/vertex.txt",
+        "Full Json path": "Output/full_graph.json",
+        "Reduced Json path": "Output/reduced_graph.json",
+       "debug": True
+    }
+}
+```
 
 ### Package and run
 

@@ -5,7 +5,13 @@
     "num executors": "1",
     "executor cores": "8",
     "driver memory": "10G",
-    "executor memory": "2G"
+    "executor memory": "2G",
+    "queue": "root.QUEUENAME",
+    "storage fraction": "0.3",
+    "memory overhead": "4G",
+    "dynamic allocation flag": "false",
+    "serializer": "org.apache.spark.serializer.KryoSerializer",
+    "kyro registration flag": "false"
   },
   "PageRank": {
     "tele": 0.15,

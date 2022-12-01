@@ -55,6 +55,12 @@ object InfoFlowMain {
       val executorCores = sparkConfig.getObj("executor cores").value.toString
       val driverMemory = sparkConfig.getObj("driver memory").value.toString
       val executorMemory = sparkConfig.getObj("executor memory").value.toString
+      val queue = sparkConfig.getObj("queue").value.toString
+      val storageFraction = sparkConfig.getObj("storage fraction").value.toString
+      val memoryOverhead = sparkConfig.getObj("memory overhead").value.toString
+      val dynamicAllocation = sparkConfig.getObj("dynamic allocation flag").value.toString
+      val serializer = sparkConfig.getObj("serializer").value.toString
+      val kyroRegistration = sparkConfig.getObj("kyro registration flag").value.toString
       val spark = new SparkConf()
         .setAppName("InfoFlow")
         .setMaster( master )
@@ -62,6 +68,12 @@ object InfoFlowMain {
         .set( "spark.executor.cores", executorCores )
         .set( "spark.driver.memory", driverMemory )
         .set( "spark.executor.memory", executorMemory )
+        .set( "spark.yarn.queue", queue)
+        .set( "spark.memory.storageFraction", storageFraction)
+        .set( "spark.executor.memoryOverhead", memoryOverhead)
+        .set( "spark.dynamicAllocation.enabled", dynamicAllocation)
+        .set( "spark.serializer", serializer)
+        .set( "spark.kryo.registrationRequired", kyroRegistration)
       val sc = new SparkContext(spark)
       sc.setLogLevel("OFF")
       ( spark, sc )
